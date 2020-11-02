@@ -1,6 +1,8 @@
-package Queries;
+package DTOs.Querys;
 
-public class AuthenticateUserQuery implements Query {
+import DTOs.DTOOperation;
+
+public class AuthenticateUserQuery extends DTOOperation {
 
 private String userName;
 private String password;

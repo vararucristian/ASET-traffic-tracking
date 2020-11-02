@@ -2,8 +2,7 @@ package Handlers;
 
 import DTOs.DTOOperation;
 
-public class CreateUserHandler implements Handler{
-
+public class GetUserByUsernameHandler implements Handler {
     @Override
     public String handle(DTOOperation query) {
         return null;

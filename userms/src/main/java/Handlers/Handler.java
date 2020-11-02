@@ -1,9 +1,9 @@
 package Handlers;
 
-import Queries.Query;
+import DTOs.DTOOperation;
 
 public interface Handler {
 
-String handle(Query query);
+String handle(DTOOperation query);
 
 }

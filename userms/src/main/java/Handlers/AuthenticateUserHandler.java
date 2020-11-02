@@ -1,11 +1,12 @@
 
 package Handlers;
 
-import Queries.Query;
+import DTOs.DTOOperation;
 
 public class AuthenticateUserHandler implements Handler {
     @Override
-    public String handle(Query query) {
+    public String handle(DTOOperation query) {
         return null;
     }
+
 }
