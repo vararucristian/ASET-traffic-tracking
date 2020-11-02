@@ -1,13 +1,13 @@
-package DTOs.Querys;
+package DTOs.Commands;
 
 import DTOs.DTOOperation;
 
-public class AuthenticateUserQuery extends DTOOperation {
+public class AuthenticateUserCommand extends DTOOperation {
 
 private String userName;
 private String password;
 
-public AuthenticateUserQuery(String userName, String password) {
+public AuthenticateUserCommand(String userName, String password) {
         this.userName = userName;
         this.password = password;
     }

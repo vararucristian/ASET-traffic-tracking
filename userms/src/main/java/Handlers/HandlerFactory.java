@@ -1,15 +1,16 @@
 package Handlers;
 
-import DTOs.Querys.AuthenticateUserQuery;
+import DTOs.Commands.CreateUserCommand;
+import DTOs.Commands.AuthenticateUserCommand;
 import DTOs.Querys.GetUserByUsernameQuery;
 
 public class HandlerFactory {
 
-    public AuthenticateUserHandler createHandler(AuthenticateUserQuery query){
+    public AuthenticateUserHandler createHandler(AuthenticateUserCommand query){
         return new AuthenticateUserHandler();
     }
 
-    public CreateUserHandler createHandler(CreateUserHandler command){
+    public CreateUserHandler createHandler(CreateUserCommand command){
         return new CreateUserHandler();
     }
 

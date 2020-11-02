@@ -4,6 +4,6 @@ import DTOs.DTOOperation;
 
 public interface Handler {
 
-String handle(DTOOperation query);
+String handle();
 
 }

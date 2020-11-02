@@ -1,4 +1,5 @@
 package DTOs;
 
-public class DTOOperation {
+public abstract class DTOOperation {
+
 }
