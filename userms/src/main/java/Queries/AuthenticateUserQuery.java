@@ -1,19 +1,11 @@
 package Queries;
 
-<<<<<<< HEAD
-public class AuthenticateQuery {
-=======
 public class AuthenticateUserQuery implements Query {
->>>>>>> eed65b5... API GATEWAY patter (FACADE) + Handler factory
 
-    private String userName;
-    private String password;
+private String userName;
+private String password;
 
-<<<<<<< HEAD
-    public AuthenticateQuery(String userName, String password) {
-=======
-    public AuthenticateUserQuery(String userName, String password) {
->>>>>>> eed65b5... API GATEWAY patter (FACADE) + Handler factory
+public AuthenticateUserQuery(String userName, String password) {
         this.userName = userName;
         this.password = password;
     }

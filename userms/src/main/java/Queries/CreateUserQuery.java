@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-package Queries;public class CreateUserQuery {
-=======
 package Queries;
 
 public class CreateUserQuery implements Query{
@@ -31,6 +28,4 @@ public class CreateUserQuery implements Query{
     public String getlName() {
         return lName;
     }
-
->>>>>>> eed65b5... API GATEWAY patter (FACADE) + Handler factory
 }

@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-package Handlers;public class AuthenticateUserHandler {
-=======
+
 package Handlers;
 
 import Queries.Query;
@@ -10,5 +8,4 @@ public class AuthenticateUserHandler implements Handler {
     public String handle(Query query) {
         return null;
     }
->>>>>>> eed65b5... API GATEWAY patter (FACADE) + Handler factory
 }
