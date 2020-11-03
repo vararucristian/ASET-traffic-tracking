@@ -6,15 +6,17 @@ class LanesModel:
     instance = None
 
     def __init__(self):
+        if LanesModel.instance is None:
+            raise Exception("This class is a singleton!")
+        else:
+            LanesModel.instance = self
         self.lanes_dex = dict()
         self.db = sqlite3.connect("lanes.db")
 
     @staticmethod
     def get_instance():
-        LanesModel.instance = None
         if LanesModel.instance is None:
-            LanesModel.instance = LanesModel()
-        return LanesModel.instance
+            LanesModel()
 
     def get_lanes(self, intersection_id):
         pass
