@@ -6,7 +6,7 @@ class LanesModel:
     instance = None
 
     def __init__(self):
-        if LanesModel.instance is None:
+        if LanesModel.instance is not None:
             raise Exception("This class is a singleton!")
         else:
             LanesModel.instance = self
@@ -17,6 +17,7 @@ class LanesModel:
     def get_instance():
         if LanesModel.instance is None:
             LanesModel()
+        return LanesModel.instance
 
     def get_lanes(self, intersection_id):
         pass
