@@ -26,6 +26,6 @@ public class CreateUserHandlerTest {
         CreateUserCommand command= new CreateUserCommand(username, "user", "user", "user");
         CreateUserHandler handler = new CreateUserHandler(command);
         String response = handler.handle();
-        assertEquals(response, successReponse);
+        assertEquals( successReponse, response);
     }
 }

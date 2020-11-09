@@ -1,5 +1,7 @@
 package DatabaseConnection;
 
+import Data.User;
+
 import java.sql.*;
 
 public class DatabaseConnection {
@@ -9,7 +11,7 @@ public class DatabaseConnection {
 
     private DatabaseConnection() throws SQLException {
         String url = "jdbc:postgresql://localhost:5432/UsersDB";
-        conn = DriverManager.getConnection(url, "postgres", "0000");
+        conn = DriverManager.getConnection(url, "postgres", "mango");
     }
 
     public static DatabaseConnection getInstance(){
@@ -50,6 +52,39 @@ public class DatabaseConnection {
             return false;
         }
         return true;
+    }
+
+    public Boolean authenticateUser(String password, String username){
+        try {
+            PreparedStatement statement = conn.prepareStatement("select password from users where username = ? and password=?");
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()) {
+                return true;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public User getUserByUsername(String username){
+        try {
+            PreparedStatement statement = conn.prepareStatement("select * from users where username = ?");
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                User user = new User (rs.getString("username"), rs.getString("password"),
+                        rs.getString("fname"), rs.getString("lname"), rs.getInt("id"));
+                return user;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
 }

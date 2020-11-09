@@ -1,13 +1,15 @@
 package Data;
 
+import java.util.Objects;
+
 public class User {
     String userName;
     String passWord;
     String fName;
     String lName;
-    String id;
+    int id;
 
-    public User(String userName, String passWord, String fName, String lName, String id) {
+    public User(String userName, String passWord, String fName, String lName, int id) {
         this.userName = userName;
         this.passWord = passWord;
         this.fName = fName;
@@ -31,7 +33,24 @@ public class User {
         return lName;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(userName, user.userName) &&
+                Objects.equals(passWord, user.passWord) &&
+                Objects.equals(fName, user.fName) &&
+                Objects.equals(lName, user.lName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userName, passWord, fName, lName, id);
     }
 }
