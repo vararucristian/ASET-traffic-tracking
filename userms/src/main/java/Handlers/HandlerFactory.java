@@ -11,7 +11,7 @@ public class HandlerFactory {
     }
 
     public CreateUserHandler createHandler(CreateUserCommand command){
-        return new CreateUserHandler();
+        return new CreateUserHandler(command);
     }
 
     public GetUserByUsernameHandler createHandler(GetUserByUsernameQuery query) {
