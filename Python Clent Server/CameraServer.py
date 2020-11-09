@@ -1,3 +1,6 @@
+import base64
+import json, cv2
+import pickle
 import socket
 from concurrent.futures.thread import ThreadPoolExecutor
 from VehicleDetector import VehicleDetector
@@ -9,6 +12,7 @@ class CameraServer:
         self.port = port
         self.clients_size = 50
         self.video_detector = VehicleDetector()
+        self.buffer_size = 409600000
 
     def start_server(self):
         server_socket = socket.socket()
@@ -21,8 +25,32 @@ class CameraServer:
             executor.submit(self.handle_client_connection, conn, address)
 
     def handle_client_connection(self, conn, address):
+        print("Received connection from: " + str(address))
+
+        # in order to test the video frames transfer from client to server
+        # for now the data is written in a local video file
+        data = dict(json.loads(conn.recv(1024).decode()))
+        video_output = cv2.VideoWriter(str(address) + '.mp4',
+                                       cv2.VideoWriter_fourcc(*'mp4v'),
+                                       data['video_fps'],
+                                       (data['video_width'], data['video_height']))
+        while True:
+            data = dict(json.loads(conn.recv(self.buffer_size).decode()))
+            if not data:
+                break
+            frame_encode = base64.b64decode(data['frame_encode'])
+            frame = pickle.loads(frame_encode)
+            video_output.write(frame)
+            data = 'Received_frame ' + str(data['frame_count'])
+            conn.send(data.encode())
+        video_output.release()
         conn.close()
 
     def post_result(self, result):
+        # to do
         pass
 
+
+if __name__ == '__main__':
+    camera_server = CameraServer('127.0.0.1', 8000)
+    camera_server.start_server()
