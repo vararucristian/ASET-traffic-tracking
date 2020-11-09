@@ -37,18 +37,18 @@ public class DatabaseConnection {
     }
 
     public Boolean insertUser(String fname, String lname, String password, String username){
-//        try {
-//            PreparedStatement statement = conn.prepareStatement("insert into users(id, fname, lname, username, password) values(?, ?, ?, ?, ?)");
-//            statement.setInt(1, getUsersId());
-//            statement.setString(2, fname);
-//            statement.setString(3, lname);
-//            statement.setString(4, username);
-//            statement.setString(5, password);
-//            statement.executeUpdate();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//            return false;
-//        }
+        try {
+            PreparedStatement statement = conn.prepareStatement("insert into users(id, fname, lname, username, password) values(?, ?, ?, ?, ?)");
+            statement.setInt(1, getUsersId());
+            statement.setString(2, fname);
+            statement.setString(3, lname);
+            statement.setString(4, username);
+            statement.setString(5, password);
+            statement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
         return true;
     }
 
