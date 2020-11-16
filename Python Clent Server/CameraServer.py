@@ -12,7 +12,7 @@ class CameraServer:
         self.port = port
         self.clients_size = 50
         self.video_detector = VehicleDetector()
-        self.buffer_size = 409600000
+        self.buffer_size = 40960000
 
     def start_server(self):
         server_socket = socket.socket()
@@ -20,6 +20,7 @@ class CameraServer:
 
         executor = ThreadPoolExecutor(self.clients_size)
         server_socket.listen(self.clients_size)
+        print('Listenning connections')
         while True:
             conn, address = server_socket.accept()
             executor.submit(self.handle_client_connection, conn, address)
@@ -34,15 +35,20 @@ class CameraServer:
                                        cv2.VideoWriter_fourcc(*'mp4v'),
                                        data['video_fps'],
                                        (data['video_width'], data['video_height']))
+        resp = 'Received init json'
+        conn.send(resp.encode())
         while True:
             data = dict(json.loads(conn.recv(self.buffer_size).decode()))
             if not data:
                 break
             frame_encode = base64.b64decode(data['frame_encode'])
             frame = pickle.loads(frame_encode)
+
+            self.video_detector.detect_objects(frame, 0)
+
             video_output.write(frame)
-            data = 'Received_frame ' + str(data['frame_count'])
-            conn.send(data.encode())
+            resp = 'Received_frame ' + str(data['frame_count'])
+            conn.send(resp.encode())
         video_output.release()
         conn.close()
 
