@@ -3,8 +3,6 @@ import DTOs.Commands.CreateUserCommand;
 import DatabaseConnection.DatabaseConnection;
 import Handlers.CreateUserHandler;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
