@@ -2,9 +2,11 @@ import json, cv2, base64
 from socket import socket
 import pickle
 from VideoFile import VideoFile
+from aop import aspectize, before, after
 
 
-class CameraClient():
+@aspectize
+class CameraClient:
     def __init__(self, video_path):
         self.video_file = VideoFile(video_path)
         self.connection = None
@@ -39,7 +41,7 @@ class CameraClient():
                 data_dict['video_width'] = self.video_file.video_width
                 data_dict['video_height'] = self.video_file.video_height
                 data_json = json.dumps(data_dict)
-                self.send_json_to_server(self.connection, data_json)
+                self.send_json_to_server(data_json)
             except Exception as error:
                 print('Error while sending frame to server:', error)
                 result = -1
@@ -58,9 +60,7 @@ class CameraClient():
                 print('Sending frame:', self.video_file.current_frame, '/', self.video_file.video_length)
                 if frame is not None:
                     json_frame = self.create_frame_json(frame)
-                    self.send_json_to_server(self.connection, json_frame)
-                    data = self.connection.recv(1024).decode()
-                    print('Received from server:', data)
+                    self.send_json_to_server(json_frame)
             except Exception as error:
                 print('Error while sending frame to server:', error)
                 result = -1
@@ -89,15 +89,26 @@ class CameraClient():
         frame_json = json.dumps(frame_dict)
         return frame_json
 
-    def send_json_to_server(self, client_socket, json_frame):
+    def send_json_to_server(self, json_frame):
         if self.connection is None:
             print('Connection is None')
         else:
-            client_socket.send(json_frame.encode())
+            self.connection.send(json_frame.encode())
+
+
+@before(CameraClient.send_json_to_server)
+def before_send_json(self, *args):
+    print('Sending json for frame:', self.video_file.current_frame, '/', self.video_file.video_length)
+
+
+@after(CameraClient.send_json_to_server)
+def after_send_json(res, self, *args):
+    data = self.connection.recv(1024).decode()
+    print('Response from server:', data)
 
 
 if __name__ == '__main__':
-    camera_client = CameraClient("traffic.mp4")
+    camera_client = CameraClient("sub-1504619634606.mp4")
     camera_client.connect_server('127.0.0.1', 8000)
     camera_client.send_video()
 
