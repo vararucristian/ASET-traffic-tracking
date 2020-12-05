@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-15 mx-auto">
+        <div class="card card-signup flex-row my-5">
+          <div class="card-body">
+            <h5 class="card-title text-center">Sign Up</h5>
+            <form #loginForm="ngForm" class="form-signin">
+              <div class="form-row">
+                <div class="form-label-group col-md-6">
+                  <input type="text" id="firstName" class="form-control" placeholder="First Name" name ="inputFirstName" ngModel required autofocus>
+                </div>
+                <div class="form-label-group col-md-6">
+                  <input type="text" id="lastName" class="form-control" placeholder="Last Name" name ="inputLastName" ngModel required autofocus>
+                </div>
+            </div>
+              <div class="form-label-group">
+                <input type="text" id="inputUsername" class="form-control" placeholder="Username" name ="inputUsername" ngModel required autofocus>
+              </div>
+              
+              <hr>
+
+              <div class="form-label-group">
+                <input type="text" id="inputEmail" class="form-control" placeholder="Email" name ="inputEmail" ngModel required autofocus>
+              </div>
+              
+              <hr>
+
+              <div class="form-label-group">
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" name ="inputPassword" ngModel required>
+              </div>
+              <div class="form-label-group">
+                <input type="password" id="confirmInputPassword" class="form-control" placeholder="ConfirmPassword" name ="inputConfirmPassword" ngModel required>
+              </div>
+
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign UP</button>
+              <hr class="my-4">
+              <a href="login" class="btn btn-lg btn-block text-uppercase" ><i class="fab fa-google mr-2"></i> Already have an account? Sign in </a>
+
+             </form>
+          </div>
+          <div class="card-img-right d-none d-md-flex">
+            <!-- Background image for card set in CSS! -->
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>

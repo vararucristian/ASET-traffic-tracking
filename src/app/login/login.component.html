@@ -1,31 +1,32 @@
 <div class="container">
     <div class="row">
-      <div class="col-lg-10 col-xl-9 mx-auto">
+      <div class="col-lg-10 col-xl-15 mx-auto">
         <div class="card card-signin flex-row my-5">
           <div class="card-img-left d-none d-md-flex">
              <!-- Background image for card set in CSS! -->
           </div>
           <div class="card-body">
             <h5 class="card-title text-center">Login</h5>
-            <form class="form-signin">
+            <form #loginForm="ngForm" (ngSubmit)="loginUser($event, loginForm)" class="form-signin">
               <div class="form-label-group">
-                <input type="text" id="inputUserame" class="form-control" placeholder="Username" required autofocus>
-                <label for="inputUserame">Username</label>
+                <input type="text" id="inputUsername" class="form-control" placeholder="Username" name ="inputUsername" ngModel required autofocus>
               </div>
               
               <hr>
 
-              <div class="form-label-group">
-                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                <label for="inputPassword">Password</label>
+              <div  class="form-label-group">
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" name ="inputPassword" ngModel required>
               </div>
+              
+              <small *ngIf="incorrectData" id="passwordHelpBlock" class="form-text">
+                Incorrect username or password
+                <hr>
+              </small>
 
-              <button (click)="loginUser(event)" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Login</button>
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Login</button>
               <hr class="my-4">
-              <button class="btn btn-lg btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Don't have an account? Sign up</button>
-              <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign up with Google</button>
-              <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i> Sign up with Facebook</button>
-            </form>
+              <a href="register" class="btn btn-lg btn-block text-uppercase" ><i class="fab fa-google mr-2"></i> Don't have an account? Sign up</a>
+              </form>
           </div>
         </div>
       </div>
