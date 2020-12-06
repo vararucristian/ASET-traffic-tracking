@@ -19,4 +19,6 @@ public AuthenticateUserCommand(String userName, String password) {
     public String getPassword() {
         return password;
     }
+
+
 }

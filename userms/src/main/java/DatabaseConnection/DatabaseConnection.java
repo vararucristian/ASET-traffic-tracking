@@ -1,6 +1,7 @@
 package DatabaseConnection;
 
 import Data.User;
+import Response.ResponseTemplate;
 
 import java.sql.*;
 
@@ -14,8 +15,8 @@ public class DatabaseConnection {
         conn = DriverManager.getConnection(url, "postgres", "0000");
     }
 
-    public static DatabaseConnection getInstance(){
-        if (instance == null){
+    public static DatabaseConnection getInstance() {
+        if (instance == null) {
             try {
                 instance = new DatabaseConnection();
             } catch (SQLException throwables) {
@@ -38,7 +39,7 @@ public class DatabaseConnection {
         return id + 1;
     }
 
-    public Boolean insertUser(String fname, String lname, String password, String username){
+    public Boolean insertUser(String fname, String lname, String password, String username) {
         try {
             PreparedStatement statement = conn.prepareStatement("insert into users(id, fname, lname, username, password) values(?, ?, ?, ?, ?)");
             statement.setInt(1, getUsersId());
@@ -47,36 +48,39 @@ public class DatabaseConnection {
             statement.setString(4, username);
             statement.setString(5, password);
             statement.executeUpdate();
-        } catch (SQLException throwables) {
+        } catch (Exception throwables) {
             throwables.printStackTrace();
             return false;
         }
         return true;
     }
 
-    public Boolean authenticateUser(String password, String username){
+    public ResponseTemplate authenticateUser(String password, String username) {
+        ResponseTemplate response = new ResponseTemplate("", "", "", false);
         try {
-            PreparedStatement statement = conn.prepareStatement("select password from users where username = ? and password=?");
+            PreparedStatement statement = conn.prepareStatement("select fname, lname, username from users where username = ? and password=?");
             statement.setString(1, username);
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
-            if(rs.next()) {
-                return true;
+            if (rs.next()) {
+                response = new ResponseTemplate(rs.getString("fname"),
+                                                rs.getString("lname"),
+                                                rs.getString("username"),
+                                         true);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            return false;
         }
-        return false;
+        return response;
     }
 
-    public User getUserByUsername(String username){
+    public User getUserByUsername(String username) {
         try {
             PreparedStatement statement = conn.prepareStatement("select * from users where username = ?");
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();
-            if(rs.next()){
-                User user = new User (rs.getString("username"), rs.getString("password"),
+            if (rs.next()) {
+                User user = new User(rs.getString("username"), rs.getString("password"),
                         rs.getString("fname"), rs.getString("lname"), rs.getInt("id"));
                 return user;
             }

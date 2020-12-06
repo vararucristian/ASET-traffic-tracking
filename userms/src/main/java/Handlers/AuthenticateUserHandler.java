@@ -3,13 +3,10 @@ package Handlers;
 
 import DTOs.Commands.AuthenticateUserCommand;
 import DatabaseConnection.DatabaseConnection;
+import Response.ResponseTemplate;
 import com.google.gson.Gson;
 
 public class AuthenticateUserHandler implements Handler {
-
-    public static class Response {
-        boolean success;
-    }
 
     AuthenticateUserCommand command;
     DatabaseConnection databaseConnection;
@@ -21,8 +18,7 @@ public class AuthenticateUserHandler implements Handler {
 
     @Override
     public String handle() {
-        AuthenticateUserHandler.Response response = new AuthenticateUserHandler.Response();
-        response.success = databaseConnection.authenticateUser(command.getPassword(), command.getUserName());
+        ResponseTemplate response = databaseConnection.authenticateUser(command.getPassword(), command.getUserName());
         Gson gson = new Gson();
         return gson.toJson(response);
     }

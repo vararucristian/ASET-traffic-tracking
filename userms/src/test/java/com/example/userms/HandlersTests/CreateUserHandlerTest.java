@@ -21,7 +21,7 @@ public class CreateUserHandlerTest {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
         int nextId = dbConnection.getUsersId();
         String username = "user" + String.valueOf(nextId);
-        CreateUserCommand command= new CreateUserCommand(username, "user", "user", "user");
+        CreateUserCommand command= new CreateUserCommand(username, "user", "user", "user", "user");
         CreateUserHandler handler = new CreateUserHandler(command);
         String response = handler.handle();
         assertEquals( successReponse, response);
