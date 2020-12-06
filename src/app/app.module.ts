@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { HomeComponent } from './home/home.component';
 
 // bootstrap
 // import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -17,7 +18,8 @@ import { RegisterComponent } from './register/register.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    HomeComponent
     ],
   imports: [
     BrowserModule,
@@ -33,6 +35,10 @@ import { RegisterComponent } from './register/register.component';
       {
         path: 'register',
         component: RegisterComponent
+      },
+      {
+        path: 'home',
+        component: HomeComponent
       }        
     ])
   ],

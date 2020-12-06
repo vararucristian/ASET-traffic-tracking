@@ -22,6 +22,16 @@ export class LoginComponent implements OnInit {
   }
 
   loginCheck(data, router: Router){
-    this.incorrectData=false;}  
+    if(data['success'] == false)
+    {
+      console.log("incorect username or password");
+      this.incorrectData = true;
+    }
+    else
+    {
+    this.incorrectData=false;
+    router.navigate(['/home']);
+    }
+  }  
   
 }

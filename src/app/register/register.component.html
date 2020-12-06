@@ -4,7 +4,7 @@
         <div class="card card-signup flex-row my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Sign Up</h5>
-            <form #loginForm="ngForm" class="form-signin">
+            <form #registerForm="ngForm" (ngSubmit)="registerUser($event, registerForm)" class="form-signin">
               <div class="form-row">
                 <div class="form-label-group col-md-6">
                   <input type="text" id="firstName" class="form-control" placeholder="First Name" name ="inputFirstName" ngModel required autofocus>
@@ -15,14 +15,7 @@
             </div>
               <div class="form-label-group">
                 <input type="text" id="inputUsername" class="form-control" placeholder="Username" name ="inputUsername" ngModel required autofocus>
-              </div>
-              
-              <hr>
-
-              <div class="form-label-group">
-                <input type="text" id="inputEmail" class="form-control" placeholder="Email" name ="inputEmail" ngModel required autofocus>
-              </div>
-              
+              </div>              
               <hr>
 
               <div class="form-label-group">
@@ -31,6 +24,11 @@
               <div class="form-label-group">
                 <input type="password" id="confirmInputPassword" class="form-control" placeholder="ConfirmPassword" name ="inputConfirmPassword" ngModel required>
               </div>
+              
+              <small *ngIf="incorrectData" id="passwordHelpBlock" class="form-text">
+                {{errorReason}}
+                <hr>
+              </small>
 
               <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign UP</button>
               <hr class="my-4">
