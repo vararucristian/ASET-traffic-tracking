@@ -8,6 +8,7 @@ from aop import aspectize, before, after
 @aspectize
 class CameraClient:
     def __init__(self, video_path):
+        self.video_path = video_path
         self.video_file = VideoFile(video_path)
         self.connection = None
 
@@ -37,6 +38,7 @@ class CameraClient:
         else:
             try:
                 data_dict = dict()
+                data_dict['video_name'] = self.video_path
                 data_dict['video_fps'] = self.video_file.video_fps
                 data_dict['video_width'] = self.video_file.video_width
                 data_dict['video_height'] = self.video_file.video_height
@@ -57,7 +59,6 @@ class CameraClient:
         else:
             try:
                 frame = self.video_file.read_next_frame()
-                print('Sending frame:', self.video_file.current_frame, '/', self.video_file.video_length)
                 if frame is not None:
                     json_frame = self.create_frame_json(frame)
                     self.send_json_to_server(json_frame)

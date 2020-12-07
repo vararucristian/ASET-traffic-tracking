@@ -35,6 +35,7 @@ class CameraServer:
                                        cv2.VideoWriter_fourcc(*'mp4v'),
                                        data['video_fps'],
                                        (data['video_width'], data['video_height']))
+        video_name = data['video_name']
         resp = 'Received init json'
         conn.send(resp.encode())
         while True:
@@ -44,7 +45,8 @@ class CameraServer:
             frame_encode = base64.b64decode(data['frame_encode'])
             frame = pickle.loads(frame_encode)
 
-            self.video_detector.detect_objects(frame, 0)
+            json_answer = self.video_detector.detect_objects(frame, video_name)
+            self.post_result(json_answer)
 
             video_output.write(frame)
             resp = 'Received_frame ' + str(data['frame_count'])
@@ -52,9 +54,9 @@ class CameraServer:
         video_output.release()
         conn.close()
 
-    def post_result(self, result):
+    def post_result(self, json_result):
         # to do
-        pass
+        print(json_result)
 
 
 if __name__ == '__main__':
