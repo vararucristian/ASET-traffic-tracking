@@ -7,9 +7,10 @@ from aop import aspectize, before, after
 
 @aspectize
 class CameraClient:
-    def __init__(self, video_path):
+    def __init__(self, video_path, intersection_name):
         self.video_path = video_path
         self.video_file = VideoFile(video_path)
+        self.intersection_name = intersection_name
         self.connection = None
 
     def connect_server(self, ip_address, port):
@@ -39,6 +40,7 @@ class CameraClient:
             try:
                 data_dict = dict()
                 data_dict['video_name'] = self.video_path
+                data_dict['intersection_name'] = self.intersection_name
                 data_dict['video_fps'] = self.video_file.video_fps
                 data_dict['video_width'] = self.video_file.video_width
                 data_dict['video_height'] = self.video_file.video_height
@@ -58,9 +60,9 @@ class CameraClient:
             print('There aren\'t any frames left to send')
         else:
             try:
-                frame = self.video_file.read_next_frame()
+                frame, is_last_frame = self.video_file.read_next_frame()
                 if frame is not None:
-                    json_frame = self.create_frame_json(frame)
+                    json_frame = self.create_frame_json(frame, is_last_frame)
                     self.send_json_to_server(json_frame)
             except Exception as error:
                 print('Error while sending frame to server:', error)
@@ -81,12 +83,13 @@ class CameraClient:
                         break
             self.end_connection()
 
-    def create_frame_json(self, frame):
+    def create_frame_json(self, frame, is_last_frame):
         frame_dict = dict()
         frame_dict['frame_count'] = self.video_file.current_frame
 
         frame_data = pickle.dumps(frame)
         frame_dict['frame_encode'] = base64.b64encode(frame_data).decode('ascii')
+        frame_dict['is_last_frame'] = is_last_frame
         frame_json = json.dumps(frame_dict)
         return frame_json
 
@@ -109,7 +112,7 @@ def after_send_json(res, self, *args):
 
 
 if __name__ == '__main__':
-    camera_client = CameraClient("sub-1504619634606.mp4")
+    camera_client = CameraClient("sub-1504619634606.mp4", 'sub-1504619634606')
     camera_client.connect_server('127.0.0.1', 8000)
     camera_client.send_video()
 

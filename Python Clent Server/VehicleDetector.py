@@ -9,13 +9,12 @@ import json
 
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
-
-from LanesModel import LanesModel
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
 
 
 class VehicleDetector:
     def __init__(self):
-        self.lanes_model = LanesModel()
 
         self.graph_path = 'Tensorflow data/frozen_inference_graph.pb'
         self.detection_graph = tf.Graph()
@@ -40,7 +39,7 @@ class VehicleDetector:
         self.category_index = label_map_util.create_category_index(self.categories)
         self.session = tf.compat.v1.Session(graph=self.detection_graph)
 
-    def detect_objects(self, image, intersection_name):
+    def detect_objects(self, image, intersection_name, lanes_dict):
 
         image_np_expanded = np.expand_dims(image, axis=0)
         image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
@@ -70,13 +69,22 @@ class VehicleDetector:
                                               np.squeeze(boxes),
                                               np.squeeze(classes).astype(np.int32),
                                               np.squeeze(scores),
-                                              num_detections)
-        print(json_answer)
+                                              num_detections,
+                                              lanes_dict)
         return json_answer
 
-    def create_json_answer(self, intersection_name, image, boxes, classes, scores, num_detections, min_score=0.5):
+    def create_json_answer(self, intersection_name, image, boxes, classes, scores, num_detections, lanes_dict,
+                           min_score=0.5):
         dict_answer = dict()
         dict_answer['intersection_name'] = intersection_name
+        dict_answer['vehicles_count'] = 0
+        dict_answer['lanes'] = dict()
+        if lanes_dict is not None:
+            self.draw_lanes(image, lanes_dict)
+            for lane_key in lanes_dict.keys():
+                dict_answer['lanes'][lane_key] = dict()
+                dict_answer['lanes'][lane_key]['vehicle_count'] = 0
+
         for i in range(0, len(boxes)):
             if scores[i] > min_score:
                 ymin, xmin, ymax, xmax = boxes[i]
@@ -95,9 +103,47 @@ class VehicleDetector:
                     answer_entry['top'] = top
                     answer_entry['right'] = right
                     answer_entry['bottom'] = bottom
-                    dict_answer[class_name + str(i)] = answer_entry
+                    dict_answer['vehicles_count'] += 1
+                    self.check_lanes_entry(answer_entry, dict_answer, lanes_dict)
+        cv2.imshow(intersection_name, image)
+        cv2.waitKey(1)
         json_answer = json.dumps(dict_answer)
         return json_answer
+
+    @staticmethod
+    def draw_lanes(image, lanes_dict):
+        for lane_points in lanes_dict.values():
+            array = np.array(lane_points, dtype=np.int32)
+            cv2.polylines(image, [array], True, (255, 0, 0), 2)
+
+    def check_lanes_entry(self, entry_dict, answer_dict, lanes_dict):
+        for lane_item in lanes_dict.items():
+            if self.check_lane_entry(entry_dict, lane_item[1]):
+                answer_dict['lanes'][lane_item[0]]['vehicle_count'] += 1
+
+    @staticmethod
+    def check_lane_entry(entry_dict, lane_points):
+        polygon = Polygon(lane_points)
+
+        entry_points = list()
+        entry_points.append((entry_dict['left'], entry_dict['top']))
+        entry_points.append((entry_dict['left'], int((entry_dict['top'] + entry_dict['bottom']) * 0.5)))
+
+        entry_points.append((entry_dict['left'], entry_dict['bottom']))
+        entry_points.append((int((entry_dict['left'] + entry_dict['right']) * 0.5), entry_dict['bottom']))
+
+        entry_points.append((entry_dict['right'], entry_dict['bottom']))
+        entry_points.append((entry_dict['right'], int((entry_dict['bottom'] + entry_dict['top']) * 0.5)))
+
+        entry_points.append((entry_dict['right'], entry_dict['top']))
+        entry_points.append((int((entry_dict['right'] + entry_dict['left']) * 0.5), entry_dict['top']))
+
+        entry_point_found = False
+        for entry_point in entry_points:
+            if polygon.contains(Point(entry_point[0], entry_point[1])):
+                entry_point_found = True
+                break
+        return entry_point_found
 
 
 if __name__ == '__main__':
