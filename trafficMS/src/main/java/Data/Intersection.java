@@ -7,6 +7,12 @@ public class Intersection {
     private List<Street> streetsList;
     private String name;
 
+    public Intersection(int id,  String name) {
+        this.id = id;
+        this.streetsList = null;
+        this.name = name;
+    }
+
     public Intersection(int id, List<Street> streetsList, String name) {
         this.id = id;
         this.streetsList = streetsList;

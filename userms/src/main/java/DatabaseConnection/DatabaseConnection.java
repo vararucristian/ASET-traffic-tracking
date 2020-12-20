@@ -12,7 +12,7 @@ public class DatabaseConnection {
 
     private DatabaseConnection() throws SQLException {
         String url = "jdbc:postgresql://localhost:5432/UsersDB";
-        conn = DriverManager.getConnection(url, "postgres", "0000");
+        conn = DriverManager.getConnection(url, "postgres", "mango");
     }
 
     public static DatabaseConnection getInstance() {
