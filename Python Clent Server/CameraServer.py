@@ -17,7 +17,7 @@ class CameraServer:
         self.buffer_size = 4096000
 
     def start_server(self):
-        server_socket = socket.socket()
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind((self.server_ip, self.port))
 
         executor = ThreadPoolExecutor(self.clients_size)
@@ -30,37 +30,35 @@ class CameraServer:
     def handle_client_connection(self, conn, address):
         print("Received connection from: " + str(address))
 
-        # in order to test the video frames transfer from client to server
-        # for now the data is written in a local video file
         data = dict(json.loads(conn.recv(1024).decode()))
         intersection_name = data['intersection_name']
         lanes_dict = self.lanes_model.get_lanes(intersection_name)
-        video_output = cv2.VideoWriter(intersection_name + '_' + str(address) + '.mp4',
-                                       cv2.VideoWriter_fourcc(*'mp4v'),
-                                       data['video_fps'],
-                                       (data['video_width'], data['video_height']))
 
         resp = 'Received init json'
         conn.send(resp.encode())
         while True:
+            self.buffer_size = int(conn.recv(1024).decode())
+            print('size:', self.buffer_size)
+            resp = 'Received_size'
+            conn.send(resp.encode())
+
             data = dict(json.loads(conn.recv(self.buffer_size).decode()))
-            if not data:
+            if not data or len(data) == 0:
                 break
             frame_encode = base64.b64decode(data['frame_encode'])
             is_last_frame = data['is_last_frame']
             frame = pickle.loads(frame_encode)
 
             json_answer = self.video_detector.detect_objects(frame, intersection_name, lanes_dict)
+            # json_answer = None
             self.post_result(json_answer)
 
-            video_output.write(frame)
-            resp = 'Received_frame ' + str(data['frame_count'])
+            resp = 'Received_frame '
             conn.send(resp.encode())
             if is_last_frame:
                 break
 
         cv2.destroyWindow(intersection_name)
-        video_output.release()
         conn.close()
         print("Ended connection from: " + str(address))
 

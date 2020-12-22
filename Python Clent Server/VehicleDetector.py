@@ -27,7 +27,7 @@ class VehicleDetector:
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
 
-        self.PATH_TO_LABELS = os.path.join('D:/Projects/Aset/models 2/research/object_detection/data',
+        self.PATH_TO_LABELS = os.path.join('Tensorflow data',
                                            'mscoco_label_map.pbtxt')
 
         self.NUM_CLASSES = 90
@@ -44,17 +44,13 @@ class VehicleDetector:
         image_np_expanded = np.expand_dims(image, axis=0)
         image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
         boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
-        # Each score represent how level of confidence for each of the objects.
-        # Score is shown on the result image, together with the class label.
         scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
         classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
         num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
-        # Actual detection.
         (boxes, scores, classes, num_detections) = self.session.run(
             [boxes, scores, classes, num_detections],
             feed_dict={image_tensor: image_np_expanded})
-        # Visualization of the results of a detection.
         vis_util.visualize_boxes_and_labels_on_image_array(
             image,
             np.squeeze(boxes),
@@ -62,7 +58,7 @@ class VehicleDetector:
             np.squeeze(scores),
             self.category_index,
             use_normalized_coordinates=True,
-            line_thickness=8)
+            line_thickness=4)
 
         json_answer = self.create_json_answer(intersection_name,
                                               image,
@@ -95,7 +91,7 @@ class VehicleDetector:
                 bottom = int(ymax * im_height)
                 class_name = self.category_index[classes[classes[i]]]['name']
                 image = cv2.rectangle(image, (left, top), (right, bottom), (255, 0, 0), 1)
-
+                #
                 if class_name in self.detected_objects:
                     answer_entry = dict()
                     answer_entry['score'] = str(scores[i])
@@ -105,9 +101,10 @@ class VehicleDetector:
                     answer_entry['bottom'] = bottom
                     dict_answer['vehicles_count'] += 1
                     self.check_lanes_entry(answer_entry, dict_answer, lanes_dict)
+
+        json_answer = json.dumps(dict_answer)
         cv2.imshow(intersection_name, image)
         cv2.waitKey(1)
-        json_answer = json.dumps(dict_answer)
         return json_answer
 
     @staticmethod
@@ -117,9 +114,10 @@ class VehicleDetector:
             cv2.polylines(image, [array], True, (255, 0, 0), 2)
 
     def check_lanes_entry(self, entry_dict, answer_dict, lanes_dict):
-        for lane_item in lanes_dict.items():
-            if self.check_lane_entry(entry_dict, lane_item[1]):
-                answer_dict['lanes'][lane_item[0]]['vehicle_count'] += 1
+        if lanes_dict is not None:
+            for lane_item in lanes_dict.items():
+                if self.check_lane_entry(entry_dict, lane_item[1]):
+                    answer_dict['lanes'][lane_item[0]]['vehicle_count'] += 1
 
     @staticmethod
     def check_lane_entry(entry_dict, lane_points):
