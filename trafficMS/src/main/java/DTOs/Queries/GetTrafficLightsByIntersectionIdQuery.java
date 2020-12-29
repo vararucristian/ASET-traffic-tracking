@@ -1,9 +1,9 @@
 package DTOs.Queries;
 
-public class GetTraffficLightsByIntersectionIdQuery {
+public class GetTrafficLightsByIntersectionIdQuery {
     private int id;
 
-    public GetTraffficLightsByIntersectionIdQuery(int id) {
+    public GetTrafficLightsByIntersectionIdQuery(int id) {
         this.id = id;
     }
 

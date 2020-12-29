@@ -2,7 +2,7 @@ package com.traffic;
 
 import DTOs.Commands.AddTrafficCommand;
 import DTOs.Queries.GetAllIntersectionQuerry;
-import DTOs.Queries.GetTraffficLightsByIntersectionIdQuery;
+import DTOs.Queries.GetTrafficLightsByIntersectionIdQuery;
 import Handlers.HandlerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +14,7 @@ public class Controller {
 
     @GetMapping("/getIntersectionById/{id}")
     public String getIntersectionById(int id) {
-        GetTraffficLightsByIntersectionIdQuery query = new GetTraffficLightsByIntersectionIdQuery(id);
+        GetTrafficLightsByIntersectionIdQuery query = new GetTrafficLightsByIntersectionIdQuery(id);
         HandlerFactory factory = new HandlerFactory();
         return factory.createHandler(query).handle();
     }

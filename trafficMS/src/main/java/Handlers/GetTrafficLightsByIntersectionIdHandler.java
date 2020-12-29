@@ -1,12 +1,12 @@
 package Handlers;
 
-import DTOs.Queries.GetTraffficLightsByIntersectionIdQuery;
+import DTOs.Queries.GetTrafficLightsByIntersectionIdQuery;
 
 public class GetTrafficLightsByIntersectionIdHandler implements Handler {
 
-    GetTraffficLightsByIntersectionIdQuery querry;
+    GetTrafficLightsByIntersectionIdQuery querry;
 
-    public GetTrafficLightsByIntersectionIdHandler(GetTraffficLightsByIntersectionIdQuery querry) {
+    public GetTrafficLightsByIntersectionIdHandler(GetTrafficLightsByIntersectionIdQuery querry) {
         this.querry= querry;
     }
 

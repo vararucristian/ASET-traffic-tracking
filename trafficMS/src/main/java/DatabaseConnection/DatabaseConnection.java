@@ -1,6 +1,7 @@
 package DatabaseConnection;
 
 import Data.Intersection;
+import Data.TrafficLight;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -83,6 +84,8 @@ public class DatabaseConnection {
             return null;
         }
     }
+
+    public List<TrafficLight> getAllTrafficLightsByIntersectionId ()
 
 
 }
