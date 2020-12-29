@@ -15,5 +15,8 @@ class VideoFile():
         if self.current_frame < self.video_length:
             self.current_frame += 1
             _, frame = self.video_input.read()
-            return frame
+            is_last_frame = False
+            if self.current_frame == self.video_length:
+                is_last_frame = True
+            return frame, is_last_frame
 

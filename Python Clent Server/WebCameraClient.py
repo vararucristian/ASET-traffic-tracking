@@ -1,17 +1,31 @@
 import json, cv2, base64
 from socket import socket
 import pickle
-from VideoFile import VideoFile
+import urllib
+from urllib import request
+import numpy as np
 from aop import aspectize, before, after
+import threading
 
 
 @aspectize
-class CameraClient:
-    def __init__(self, video_path, intersection_name):
-        self.video_path = video_path
-        self.video_file = VideoFile(video_path)
+class WebCameraClient:
+    def __init__(self, frame_address, intersection_name):
+        self.frame_address = frame_address
         self.intersection_name = intersection_name
         self.connection = None
+        self.stop = False
+        self.is_last_frame = False
+        self.input_thread = threading.Thread(target=self.input)
+        self.input_thread.start()
+
+    def input(self):
+        while True:
+            command = input()
+            if command == 'q':
+                self.is_last_frame = True
+                print('input:', command)
+                break
 
     def connect_server(self, ip_address, port):
         result = 0
@@ -34,8 +48,6 @@ class CameraClient:
         if self.connection is None:
             print('Connection is None')
             result = -1
-        elif self.video_file.current_frame >= self.video_file.video_length:
-            print('There aren\'t any frames left to send')
         else:
             try:
                 data_dict = dict()
@@ -52,19 +64,19 @@ class CameraClient:
         if self.connection is None:
             print('Connection is None')
             result = -1
-        elif self.video_file.current_frame >= self.video_file.video_length:
-            print('There aren\'t any frames left to send')
         else:
             try:
-                frame, is_last_frame = self.video_file.read_next_frame()
-                if frame is not None:
-                    json_frame = self.create_frame_json(frame, is_last_frame)
-                    print('len', len(json_frame))
+                resp = urllib.request.urlopen(self.frame_address)
+                if resp is not None:
+                    frame = np.asarray(bytearray(resp.read()), dtype="uint8")
+                    frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                    json_frame = self.create_frame_json(frame)
                     self.connection.send(str(len(json_frame)).encode())
-
                     data = self.connection.recv(1024).decode()
                     print('Response from server:', data)
                     self.send_json_to_server(json_frame)
+                    if self.is_last_frame is True:
+                        self.stop = True
             except Exception as error:
                 print('Error while sending frame to server:', error)
                 result = -1
@@ -73,23 +85,21 @@ class CameraClient:
     def send_video(self):
         if self.connection is None:
             print('Connection is None')
-        elif self.video_file.current_frame >= self.video_file.video_length:
-            print('There aren\'t any frames left to send')
         else:
             video_data_result = camera_client.send_video_data()
             if video_data_result == 0:
-                while camera_client.video_file.current_frame < camera_client.video_file.video_length:
+                while not self.stop:
                     send_frame_result = camera_client.send_video_frame()
                     if send_frame_result != 0:
                         break
             self.end_connection()
 
-    def create_frame_json(self, frame, is_last_frame):
+    def create_frame_json(self, frame):
         frame_dict = dict()
-
         frame_data = pickle.dumps(frame)
-        frame_dict['frame_encode'] = base64.b64encode(frame_data).decode('ascii')
-        frame_dict['is_last_frame'] = is_last_frame
+        frame_encode = base64.b64encode(frame_data)
+        frame_dict['frame_encode'] = frame_encode.decode('ascii')
+        frame_dict['is_last_frame'] = self.is_last_frame
         frame_json = json.dumps(frame_dict)
         return frame_json
 
@@ -100,19 +110,19 @@ class CameraClient:
             self.connection.send(json_frame.encode())
 
 
-@before(CameraClient.send_json_to_server)
+@before(WebCameraClient.send_json_to_server)
 def before_send_json(self, *args):
-    print('Sending json for frame:', self.video_file.current_frame, '/', self.video_file.video_length)
+    print('Sending json for frame')
 
 
-@after(CameraClient.send_json_to_server)
+@after(WebCameraClient.send_json_to_server)
 def after_send_json(res, self, *args):
     data = self.connection.recv(1024).decode()
     print('Response from server:', data)
 
 
 if __name__ == '__main__':
-    camera_client = CameraClient("sub-1504619634606.mp4", 'sub-1504619634606')
+    camera_client = WebCameraClient("https://live.freecam.ro/live/iasi-hotel-unirea?d=1608366225652", 'Unirea')
     camera_client.connect_server('127.0.0.1', 8000)
     camera_client.send_video()
 
