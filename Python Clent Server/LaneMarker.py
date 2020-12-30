@@ -38,8 +38,11 @@ class LaneMarker:
                 self.image = self.image_clone.copy()
                 self.points = []
             elif key == ord('s'):
-                print("marking output:", self.points)
-                self.save_to_model()
+                print('marking output:', self.points)
+                self.save_lane_to_model()
+            elif key == ord('a'):
+                print('interest output:', self.points)
+                self.save_area_to_model()
             elif key == ord('q'):
                 break
 
@@ -54,8 +57,17 @@ class LaneMarker:
         cv2.polylines(self.image, [array], True, (255, 0, 0), 2)
         cv2.imshow(self.intersection_name, self.image)
 
-    def save_to_model(self):
-        self.lanes_model.set_lane(self.intersection_name, self.lane_name, self.points)
+    def save_lane_to_model(self):
+        if len(self.points) >= 3:
+            self.lanes_model.set_lane(self.intersection_name, self.lane_name, self.points)
+        else:
+            print('not enouth points, minimum 3 is required')
+
+    def save_area_to_model(self):
+        if len(self.points) >= 3:
+            self.lanes_model.set_area(self.intersection_name, self.points)
+        else:
+            print('not enouth points, minimum 3 is required')
 
     def contains_centre(self):
         if len(self.points) >= 3:
@@ -66,4 +78,7 @@ class LaneMarker:
 
 if __name__ == '__main__':
     lane_marker = LaneMarker()
+    # lane_marker.mark_lane('C:\\Users\\andre\\Desktop\\0500.jpg', 'sub-1504619634606', 'lane')
+    lane_marker.mark_lane('C:\\Users\\andre\\Desktop\\hotel_unirea.jfif', 'hotel unirea', 'lane')
+
 

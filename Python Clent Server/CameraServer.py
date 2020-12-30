@@ -33,12 +33,12 @@ class CameraServer:
         data = dict(json.loads(conn.recv(1024).decode()))
         intersection_name = data['intersection_name']
         lanes_dict = self.lanes_model.get_lanes(intersection_name)
+        area_points = self.lanes_model.get_area(intersection_name)
 
         resp = 'Received init json'
         conn.send(resp.encode())
         while True:
             self.buffer_size = int(conn.recv(1024).decode())
-            print('size:', self.buffer_size)
             resp = 'Received_size'
             conn.send(resp.encode())
 
@@ -49,8 +49,7 @@ class CameraServer:
             is_last_frame = data['is_last_frame']
             frame = pickle.loads(frame_encode)
 
-            json_answer = self.video_detector.detect_objects(frame, intersection_name, lanes_dict)
-            # json_answer = None
+            json_answer = self.video_detector.detect_objects(frame, intersection_name, lanes_dict, area_points)
             self.post_result(json_answer)
 
             resp = 'Received_frame '

@@ -1,8 +1,7 @@
+import base64
+
 import numpy as np
 import os
-import six.moves.urllib as urllib
-import sys
-import tarfile
 import tensorflow as tf
 import cv2
 import json
@@ -39,7 +38,9 @@ class VehicleDetector:
         self.category_index = label_map_util.create_category_index(self.categories)
         self.session = tf.compat.v1.Session(graph=self.detection_graph)
 
-    def detect_objects(self, image, intersection_name, lanes_dict):
+    def detect_objects(self, frame, intersection_name, lanes_dict, area_points):
+
+        image = self.crop_frame(frame, area_points)
 
         image_np_expanded = np.expand_dims(image, axis=0)
         image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
@@ -52,21 +53,23 @@ class VehicleDetector:
             [boxes, scores, classes, num_detections],
             feed_dict={image_tensor: image_np_expanded})
         vis_util.visualize_boxes_and_labels_on_image_array(
-            image,
+            frame,
             np.squeeze(boxes),
             np.squeeze(classes).astype(np.int32),
             np.squeeze(scores),
             self.category_index,
             use_normalized_coordinates=True,
-            line_thickness=4)
+            line_thickness=4,
+            min_score_thresh=.5)
 
         json_answer = self.create_json_answer(intersection_name,
-                                              image,
+                                              frame,
                                               np.squeeze(boxes),
                                               np.squeeze(classes).astype(np.int32),
                                               np.squeeze(scores),
                                               num_detections,
                                               lanes_dict)
+
         return json_answer
 
     def create_json_answer(self, intersection_name, image, boxes, classes, scores, num_detections, lanes_dict,
@@ -102,6 +105,10 @@ class VehicleDetector:
                     dict_answer['vehicles_count'] += 1
                     self.check_lanes_entry(answer_entry, dict_answer, lanes_dict)
 
+
+        retval, buffer = cv2.imencode('.png', image)
+        image_text = base64.b64encode(buffer).decode('ascii')
+        dict_answer['image'] = image_text
         json_answer = json.dumps(dict_answer)
         cv2.imshow(intersection_name, image)
         cv2.waitKey(1)
@@ -142,6 +149,19 @@ class VehicleDetector:
                 entry_point_found = True
                 break
         return entry_point_found
+
+    @staticmethod
+    def crop_frame(frame, area_points):
+        frame = frame.copy()
+        res = frame
+        if area_points is not None:
+            mask = np.zeros(frame.shape[0:2], dtype=np.uint8)
+            points = np.array(area_points)
+            cv2.drawContours(mask, [points], -1, (255, 255, 255), -1, cv2.LINE_AA)
+
+            res = cv2.bitwise_and(frame, frame, mask=mask)
+            cv2.imshow("Samed Size Black Image", res)
+        return res
 
 
 if __name__ == '__main__':
