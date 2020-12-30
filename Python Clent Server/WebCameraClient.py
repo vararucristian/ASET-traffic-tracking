@@ -24,7 +24,6 @@ class WebCameraClient:
             command = input()
             if command == 'q':
                 self.is_last_frame = True
-                print('input:', command)
                 break
 
     def connect_server(self, ip_address, port):
@@ -122,7 +121,7 @@ def after_send_json(res, self, *args):
 
 
 if __name__ == '__main__':
-    camera_client = WebCameraClient("https://live.freecam.ro/live/iasi-hotel-unirea?d=1608366225652", 'Unirea')
+    camera_client = WebCameraClient("https://live.freecam.ro/live/iasi-hotel-unirea?d=1608366225652", 'hotel unirea')
     camera_client.connect_server('127.0.0.1', 8000)
     camera_client.send_video()
 

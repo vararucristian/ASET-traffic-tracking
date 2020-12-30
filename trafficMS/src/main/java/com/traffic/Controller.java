@@ -1,35 +1,43 @@
 package com.traffic;
 
 import DTOs.Commands.AddTrafficCommand;
-import DTOs.Queries.GetAllIntersectionQuerry;
-import DTOs.Queries.GetTrafficLightsByIntersectionIdQuery;
+import DTOs.Queries.GetAllIntersectionsQuery;
+import DTOs.Queries.GetIntersectionQuery;
+import DTOs.Queries.GetTrafficByLightQuery;
 import Handlers.HandlerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class Controller {
 
-    @GetMapping("/getIntersectionById/{id}")
-    public String getIntersectionById(int id) {
-        GetTrafficLightsByIntersectionIdQuery query = new GetTrafficLightsByIntersectionIdQuery(id);
+    @GetMapping("/getIntersection/{name}")
+    public String getIntersection(@PathVariable String name) {
+        GetIntersectionQuery query = new GetIntersectionQuery(name);
         HandlerFactory factory = new HandlerFactory();
         return factory.createHandler(query).handle();
     }
 
     @GetMapping("/getAllIntersections")
-    public String getAllIntersections() {
-        GetAllIntersectionQuerry query = new GetAllIntersectionQuerry();
+    public String getIntersections(){
+        GetAllIntersectionsQuery query = new GetAllIntersectionsQuery();
+        HandlerFactory factory = new HandlerFactory();
+        return factory.createHandler(query).handle();
+    }
+
+    @GetMapping("/getTrafficByLight/{id}")
+    public String getTrafficByLight(@PathVariable Integer id){
+        System.out.println(id);
+        GetTrafficByLightQuery query = new GetTrafficByLightQuery(id);
         HandlerFactory factory = new HandlerFactory();
         return factory.createHandler(query).handle();
     }
 
     @PostMapping(path = "/addTraffic", consumes = "application/json", produces = "application/json")
-    public String addTraffic(@RequestBody AddTrafficCommand command)
+    public String createIntersection(@RequestBody AddTrafficCommand command)
     {
         HandlerFactory factory = new HandlerFactory();
         return factory.createHandler(command).handle();
     }
+
+
 }

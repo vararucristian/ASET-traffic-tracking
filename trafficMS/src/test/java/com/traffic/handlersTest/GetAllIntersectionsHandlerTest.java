@@ -1,8 +1,8 @@
 package com.traffic.handlersTest;
 
-import DTOs.Queries.GetAllIntersectionQuerry;
+import DTOs.Queries.GetAllIntersectionsQuery;
+import DTOs.Queries.GetIntersectionQuery;
 import Handlers.GetAllIntersectionsHandler;
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -14,9 +14,9 @@ public class GetAllIntersectionsHandlerTest {
     @Test
     void handleTest() throws SQLException {
 
-        GetAllIntersectionQuerry querry= new GetAllIntersectionQuerry();
+        GetAllIntersectionsQuery query= new GetAllIntersectionsQuery();
 
-        GetAllIntersectionsHandler handler = new GetAllIntersectionsHandler(querry);
+        GetAllIntersectionsHandler handler = new GetAllIntersectionsHandler(query);
         String response = handler.handle();
         assertFalse( "Json should not be empty list", response.equals("[]"));
     }

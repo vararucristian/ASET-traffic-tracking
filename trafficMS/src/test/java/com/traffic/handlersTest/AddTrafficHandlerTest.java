@@ -24,7 +24,7 @@ public class AddTrafficHandlerTest {
         Gson gson = new Gson();
         String successReponse = gson.toJson(new AddTrafficHandlerTest.SuccessResponse());
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
-        int maxId = dbInstance.getTrafficLightId();
+        int maxId = dbInstance.getTrafficId();
         int nrCars = 10;
         String image = "";
         dbInstance.addTraffic(maxId , nrCars, image);

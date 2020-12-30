@@ -22,7 +22,7 @@ public class DatabaseConnectionTests {
     @Test
     void AddTrafficTest() throws SQLException {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
-        int maxId = dbInstance.getTrafficLightId();
+        int maxId = dbInstance.getTrafficId();
         Boolean result = dbInstance.addTraffic(maxId , 10, "");
         assertTrue("Result should be true",  result == true);
     }
@@ -30,7 +30,7 @@ public class DatabaseConnectionTests {
     @Test
     void getTrafficLightIdTest() throws SQLException {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
-        int maxId = dbInstance.getTrafficLightId();
+        int maxId = dbInstance.getTrafficId();
         assertTrue("Id should be grater then 0",  maxId > 0);
     }
 

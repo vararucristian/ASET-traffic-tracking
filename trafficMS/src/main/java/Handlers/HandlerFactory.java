@@ -2,20 +2,25 @@ package Handlers;
 
 
 import DTOs.Commands.AddTrafficCommand;
-import DTOs.Queries.GetAllIntersectionQuerry;
-import DTOs.Queries.GetTrafficLightsByIntersectionIdQuery;
+import DTOs.Queries.GetAllIntersectionsQuery;
+import DTOs.Queries.GetIntersectionQuery;
+import DTOs.Queries.GetTrafficByLightQuery;
 
 public class HandlerFactory {
 
-    public GetTrafficLightsByIntersectionIdHandler createHandler(GetTrafficLightsByIntersectionIdQuery query){
-        return new GetTrafficLightsByIntersectionIdHandler(query);
+    public GetIntersectionHandler createHandler(GetIntersectionQuery query){
+        return new GetIntersectionHandler(query);
+    }
+
+    public GetAllIntersectionsHandler createHandler(GetAllIntersectionsQuery query){
+        return new GetAllIntersectionsHandler(query);
+    }
+
+    public GetTrafficByLightHandler createHandler(GetTrafficByLightQuery query){
+        return new GetTrafficByLightHandler(query);
     }
 
     public AddTrafficHandler createHandler(AddTrafficCommand command){
         return new AddTrafficHandler(command);
-    }
-
-    public GetAllIntersectionsHandler createHandler(GetAllIntersectionQuerry query){
-        return new GetAllIntersectionsHandler(query);
     }
 }

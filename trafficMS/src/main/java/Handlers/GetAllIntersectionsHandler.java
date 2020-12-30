@@ -1,32 +1,35 @@
 package Handlers;
 
-import DTOs.Commands.AddTrafficCommand;
-import DTOs.Queries.GetAllIntersectionQuerry;
+import DTOs.Queries.GetAllIntersectionsQuery;
+import DTOs.Queries.GetIntersectionQuery;
 import Data.Intersection;
 import DatabaseConnection.DatabaseConnection;
 import com.google.gson.Gson;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class GetAllIntersectionsHandler implements Handler{
+public class GetAllIntersectionsHandler implements Handler {
 
     public static class Response {
+        ArrayList<Intersection> intersections;
         boolean success;
-        String reason;
     }
 
-    GetAllIntersectionQuerry command;
+    GetAllIntersectionsQuery querry;
     DatabaseConnection databaseConnection;
 
-    public GetAllIntersectionsHandler(GetAllIntersectionQuerry command) {
-        this.command= command;
+    public GetAllIntersectionsHandler(GetAllIntersectionsQuery querry) {
+        this.querry= querry;
         databaseConnection = DatabaseConnection.getInstance();
     }
 
     @Override
     public String handle() {
-        List<Intersection> intersections = databaseConnection.getAllIntersections();
+        Response response = new Response();
+        response.intersections = databaseConnection.getAllIntersections();
+        response.success = true;
         Gson gson = new Gson();
-        return gson.toJson(intersections);
+        return gson.toJson(response);
     }
+
 }
