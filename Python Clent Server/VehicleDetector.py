@@ -1,5 +1,4 @@
 import base64
-
 import numpy as np
 import os
 import tensorflow as tf
@@ -75,14 +74,14 @@ class VehicleDetector:
     def create_json_answer(self, intersection_name, image, boxes, classes, scores, num_detections, lanes_dict,
                            min_score=0.5):
         dict_answer = dict()
-        dict_answer['intersection_name'] = intersection_name
-        dict_answer['vehicles_count'] = 0
-        dict_answer['lanes'] = dict()
-        if lanes_dict is not None:
-            self.draw_lanes(image, lanes_dict)
-            for lane_key in lanes_dict.keys():
-                dict_answer['lanes'][lane_key] = dict()
-                dict_answer['lanes'][lane_key]['vehicle_count'] = 0
+        dict_answer['idTrafficLight'] = int(intersection_name)
+        dict_answer['nrCars'] = 0
+        # dict_answer['lanes'] = dict()
+        # if lanes_dict is not None:
+        #     self.draw_lanes(image, lanes_dict)
+        #     for lane_key in lanes_dict.keys():
+        #         dict_answer['lanes'][lane_key] = dict()
+        #         dict_answer['lanes'][lane_key]['vehicle_count'] = 0
 
         for i in range(0, len(boxes)):
             if scores[i] > min_score:
@@ -102,8 +101,8 @@ class VehicleDetector:
                     answer_entry['top'] = top
                     answer_entry['right'] = right
                     answer_entry['bottom'] = bottom
-                    dict_answer['vehicles_count'] += 1
-                    self.check_lanes_entry(answer_entry, dict_answer, lanes_dict)
+                    dict_answer['nrCars'] += 1
+                    # self.check_lanes_entry(answer_entry, dict_answer, lanes_dict)
 
 
         retval, buffer = cv2.imencode('.png', image)

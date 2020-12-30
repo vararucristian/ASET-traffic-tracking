@@ -6,6 +6,7 @@ import DTOs.Queries.GetIntersectionQuery;
 import DTOs.Queries.GetTrafficByLightQuery;
 import Handlers.HandlerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.Resource;
 
 @RestController
 public class Controller {
@@ -33,10 +34,10 @@ public class Controller {
     }
 
     @PostMapping(path = "/addTraffic", consumes = "application/json", produces = "application/json")
-    public String createIntersection(@RequestBody AddTrafficCommand command)
+    public String createIntersection(@RequestBody Resource<AddTrafficCommand> command)
     {
         HandlerFactory factory = new HandlerFactory();
-        return factory.createHandler(command).handle();
+        return factory.createHandler(command.getContent()).handle();
     }
 
 

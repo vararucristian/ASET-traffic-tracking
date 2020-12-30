@@ -78,7 +78,5 @@ class LaneMarker:
 
 if __name__ == '__main__':
     lane_marker = LaneMarker()
-    # lane_marker.mark_lane('C:\\Users\\andre\\Desktop\\0500.jpg', 'sub-1504619634606', 'lane')
-    lane_marker.mark_lane('C:\\Users\\andre\\Desktop\\hotel_unirea.jfif', 'hotel unirea', 'lane')
-
+    lane_marker.mark_lane('images_helpers/0500.jpg', '1', 'lane')
 

@@ -1,7 +1,6 @@
 package Handlers;
 
 import DTOs.Queries.GetAllIntersectionsQuery;
-import DTOs.Queries.GetIntersectionQuery;
 import Data.Intersection;
 import DatabaseConnection.DatabaseConnection;
 import com.google.gson.Gson;

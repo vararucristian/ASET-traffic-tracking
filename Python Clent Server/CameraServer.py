@@ -3,6 +3,9 @@ import json, cv2
 import pickle
 import socket
 from concurrent.futures.thread import ThreadPoolExecutor
+
+import requests
+
 from VehicleDetector import VehicleDetector
 from LanesModel import LanesModel
 
@@ -62,8 +65,14 @@ class CameraServer:
         print("Ended connection from: " + str(address))
 
     def post_result(self, json_result):
-        print(json_result)
-        #to do
+        # print(json_result)
+        # exit()
+        r = requests.post('http://localhost:8082/addTraffic',
+                          data=json_result,
+                          headers={'Content-Type': 'application/json',
+                                   'Access-Control-Allow-Origin': '*'
+    })
+        print(r.json())
 
 
 if __name__ == '__main__':
