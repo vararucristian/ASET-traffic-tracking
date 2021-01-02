@@ -39,7 +39,7 @@ class VehicleDetector:
 
     def detect_objects(self, frame, intersection_name, lanes_dict, area_points):
 
-        image = self.crop_frame(frame, area_points)
+        image = self.crop_frame(frame, area_points, intersection_name)
 
         image_np_expanded = np.expand_dims(image, axis=0)
         image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
@@ -51,21 +51,26 @@ class VehicleDetector:
         (boxes, scores, classes, num_detections) = self.session.run(
             [boxes, scores, classes, num_detections],
             feed_dict={image_tensor: image_np_expanded})
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            frame,
-            np.squeeze(boxes),
-            np.squeeze(classes).astype(np.int32),
-            np.squeeze(scores),
-            self.category_index,
-            use_normalized_coordinates=True,
-            line_thickness=4,
-            min_score_thresh=.5)
+
+        boxes = np.squeeze(boxes)
+        scores = np.squeeze(scores)
+        classes = np.squeeze(classes).astype(np.int32)
+
+        # vis_util.visualize_boxes_and_labels_on_image_array(
+        #     frame,
+        #     boxes,
+        #     classes,
+        #     scores,
+        #     self.category_index,
+        #     use_normalized_coordinates=True,
+        #     line_thickness=4,
+        #     min_score_thresh=.5)
 
         json_answer = self.create_json_answer(intersection_name,
                                               frame,
-                                              np.squeeze(boxes),
-                                              np.squeeze(classes).astype(np.int32),
-                                              np.squeeze(scores),
+                                              boxes,
+                                              classes,
+                                              scores,
                                               num_detections,
                                               lanes_dict)
 
@@ -92,9 +97,9 @@ class VehicleDetector:
                 top = int(ymin * im_height)
                 bottom = int(ymax * im_height)
                 class_name = self.category_index[classes[classes[i]]]['name']
-                image = cv2.rectangle(image, (left, top), (right, bottom), (255, 0, 0), 1)
-                #
+
                 if class_name in self.detected_objects:
+                    image = cv2.rectangle(image, (left, top), (right, bottom), (255, 0, 0), 4)
                     answer_entry = dict()
                     answer_entry['score'] = str(scores[i])
                     answer_entry['left'] = left
@@ -150,7 +155,7 @@ class VehicleDetector:
         return entry_point_found
 
     @staticmethod
-    def crop_frame(frame, area_points):
+    def crop_frame(frame, area_points, intersection_name):
         frame = frame.copy()
         res = frame
         if area_points is not None:
@@ -159,7 +164,7 @@ class VehicleDetector:
             cv2.drawContours(mask, [points], -1, (255, 255, 255), -1, cv2.LINE_AA)
 
             res = cv2.bitwise_and(frame, frame, mask=mask)
-            cv2.imshow("Samed Size Black Image", res)
+            cv2.imshow(intersection_name + ' area', res)
         return res
 
 

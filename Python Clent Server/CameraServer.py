@@ -61,6 +61,7 @@ class CameraServer:
                 break
 
         cv2.destroyWindow(intersection_name)
+        cv2.destroyWindow(intersection_name + ' area')
         conn.close()
         print("Ended connection from: " + str(address))
 
