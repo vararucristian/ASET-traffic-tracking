@@ -40,7 +40,8 @@ import { HomeComponent } from './home/home.component';
         path: 'home',
         component: HomeComponent
       }        
-    ])
+    ]
+    )
   ],
   providers: [],
   bootstrap: [AppComponent]

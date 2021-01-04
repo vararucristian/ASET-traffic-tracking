@@ -44,9 +44,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-# .Net
-/api's/Users_API/.vs/Users_API/v16/
-/api's/Users_API/Users_API/Users_API.csproj
-/api's/Users_API/Users_API/obj
-/api's/Users_API/Users_API/bin/Debug/
