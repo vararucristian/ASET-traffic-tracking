@@ -7,10 +7,11 @@ from aop import aspectize, before, after
 
 @aspectize
 class CameraClient:
-    def __init__(self, video_path, intersection_name):
+    def __init__(self, video_path, intersection_name, min_score=0.5):
         self.video_path = video_path
         self.video_file = VideoFile(video_path)
         self.intersection_name = intersection_name
+        self.min_score = min_score
         self.connection = None
 
     def connect_server(self, ip_address, port):
@@ -40,6 +41,7 @@ class CameraClient:
             try:
                 data_dict = dict()
                 data_dict['intersection_name'] = self.intersection_name
+                data_dict['min_score'] = self.min_score
                 data_json = json.dumps(data_dict)
                 self.send_json_to_server(data_json)
             except Exception as error:
@@ -59,9 +61,7 @@ class CameraClient:
                 frame, is_last_frame = self.video_file.read_next_frame()
                 if frame is not None:
                     json_frame = self.create_frame_json(frame, is_last_frame)
-                    print('len', len(json_frame))
                     self.connection.send(str(len(json_frame)).encode())
-
                     data = self.connection.recv(1024).decode()
                     print('Response from server:', data)
                     self.send_json_to_server(json_frame)
@@ -86,7 +86,6 @@ class CameraClient:
 
     def create_frame_json(self, frame, is_last_frame):
         frame_dict = dict()
-
         frame_data = pickle.dumps(frame)
         frame_dict['frame_encode'] = base64.b64encode(frame_data).decode('ascii')
         frame_dict['is_last_frame'] = is_last_frame
