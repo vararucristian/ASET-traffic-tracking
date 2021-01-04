@@ -111,7 +111,7 @@ def after_send_json(res, self, *args):
 
 
 if __name__ == '__main__':
-    camera_client = CameraClient("Videos/sub-1504619634606.mp4", '1')
+    camera_client = CameraClient("Videos/sub-1504619634606.mp4", '2')
     camera_client.connect_server('127.0.0.1', 8000)
     camera_client.send_video()
 

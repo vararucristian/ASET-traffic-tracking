@@ -3,22 +3,22 @@ package DTOs.Commands;
 import DTOs.DTOOperation;
 
 public class AddTrafficCommand extends DTOOperation {
-    private int idTrafficLight;
+    private int streetId;
     private int nrCars;
     private String image;
 
-    public AddTrafficCommand(int idTrafficLight, int nrCars, String image) {
-        this.idTrafficLight = idTrafficLight;
+    public AddTrafficCommand(int streetId, int nrCars, String image) {
+        this.streetId = streetId;
         this.nrCars = nrCars;
         this.image = image;
     }
 
-    public int getIdTrafficLight() {
-        return idTrafficLight;
+    public int getStreetId() {
+        return streetId;
     }
 
-    public void setIdTrafficLight(int idTrafficLight) {
-        this.idTrafficLight = idTrafficLight;
+    public void setStreetId(int streetId) {
+        this.streetId = streetId;
     }
 
     public int getNrCars() {

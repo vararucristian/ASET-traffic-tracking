@@ -7,8 +7,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.*;
 
 public class DatabaseConnection {
     public static DatabaseConnection instance = null;
@@ -45,8 +44,8 @@ public class DatabaseConnection {
         return id + 1;
     }
 
-    private String saveImage(String base64Image, int id_traffic_light) {
-        String path = "images/" + id_traffic_light + ".png";
+    private String saveImage(String base64Image, int id_street) {
+        String path = "images/" + id_street + ".png";
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(base64Image);
             FileUtils.writeByteArrayToFile(new File(path), decodedBytes);
@@ -70,12 +69,12 @@ public class DatabaseConnection {
         return encodedString;
     }
 
-    public boolean checkTrafficExistence(int trafficLightId) {
+    public boolean checkTrafficExistence(int streetId) {
         int id = 0;
         try {
             PreparedStatement statement = conn.prepareStatement(
-                    "select count(*) from traffic where id_traffic_light=?");
-            statement.setInt(1, trafficLightId);
+                    "select count(*) from traffic where id_street=?");
+            statement.setInt(1, streetId);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             id = resultSet.getInt(1);
@@ -86,21 +85,21 @@ public class DatabaseConnection {
     }
 
 
-    public Boolean addTraffic(int id_traffic_light, int nrCarsDetected, String image) {
-        if (checkTrafficExistence(id_traffic_light))
-            return updateTraffic(id_traffic_light, nrCarsDetected, image);
+    public Boolean addTraffic(int id_street, int nrCarsDetected, String image) {
+        if (checkTrafficExistence(id_street))
+            return updateTraffic(id_street, nrCarsDetected, image);
         else
-            return insertNewTraffic(id_traffic_light, nrCarsDetected, image);
+            return insertNewTraffic(id_street, nrCarsDetected, image);
     }
 
-    private Boolean updateTraffic(int id_traffic_light, int nrCarsDetected, String image) {
+    private Boolean updateTraffic(int id_street, int nrCarsDetected, String image) {
         try {
             PreparedStatement statement = conn.prepareStatement(
-                    "update traffic SET nr_cars=? WHERE id_traffic_light=?");
+                    "update traffic SET nr_cars=? WHERE id_street=?");
             statement.setInt(1, nrCarsDetected);
-            statement.setInt(2, id_traffic_light);
+            statement.setInt(2, id_street);
 
-            saveImage(image, id_traffic_light);
+            saveImage(image, id_street);
             statement.executeUpdate();
         } catch (Exception throwables) {
             throwables.printStackTrace();
@@ -109,14 +108,14 @@ public class DatabaseConnection {
         return true;
     }
 
-    private Boolean insertNewTraffic(int id_traffic_light, int nrCarsDetected, String image) {
+    private Boolean insertNewTraffic(int id_street, int nrCarsDetected, String image) {
         try {
-            PreparedStatement statement = conn.prepareStatement("insert into traffic(id, id_traffic_light, nr_cars, image) values(?, ?, ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("insert into traffic(id, id_street, nr_cars, image) values(?, ?, ?, ?)");
             statement.setInt(1, getTrafficId());
-            statement.setInt(2, id_traffic_light);
+            statement.setInt(2, id_street);
             statement.setInt(3, nrCarsDetected);
 
-            statement.setString(4, saveImage(image, id_traffic_light));
+            statement.setString(4, saveImage(image, id_street));
             statement.executeUpdate();
         } catch (Exception throwables) {
             throwables.printStackTrace();
@@ -141,24 +140,27 @@ public class DatabaseConnection {
         return intersectionList;
     }
 
-    public Traffic getTrafficByLightId(int id) {
-        Traffic traffic = null;
+    public List<Traffic> getTrafficByIntersectionId(int id) {
+        List <Traffic> trafficList = new ArrayList<>();
         try {
             PreparedStatement statement = conn.prepareStatement(
-                    "select * from traffic where id_traffic_light=?");
+                    "select * from traffic join streets on streets.id = traffic.id_street "+
+                            "where id_intersection=?");
             statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            String base64Img = getBase64Image(resultSet.getString(4));
-            traffic = new Traffic(resultSet.getInt(1),
-                                  resultSet.getInt(2),
-                                  resultSet.getInt(3),
-                                  base64Img);
+
+            while(resultSet.next()) {
+                String base64Img = getBase64Image(resultSet.getString(4));
+                trafficList.add(new Traffic(resultSet.getInt(1),
+                        resultSet.getInt(2),
+                        resultSet.getInt(3),
+                        base64Img));
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        return traffic;
+        return trafficList;
 
     }
 }

@@ -3,7 +3,7 @@ package com.traffic;
 import DTOs.Commands.AddTrafficCommand;
 import DTOs.Queries.GetAllIntersectionsQuery;
 import DTOs.Queries.GetIntersectionQuery;
-import DTOs.Queries.GetTrafficByLightQuery;
+import DTOs.Queries.GetTrafficByIntersectionQuery;
 import Handlers.HandlerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.hateoas.Resource;
@@ -25,10 +25,10 @@ public class Controller {
         return factory.createHandler(query).handle();
     }
 
-    @GetMapping("/getTrafficByLight/{id}")
-    public String getTrafficByLight(@PathVariable Integer id){
+    @GetMapping("/getTrafficByIntersection/{id}")
+    public String getTrafficByIntersection(@PathVariable Integer id){
         System.out.println(id);
-        GetTrafficByLightQuery query = new GetTrafficByLightQuery(id);
+        GetTrafficByIntersectionQuery query = new GetTrafficByIntersectionQuery(id);
         HandlerFactory factory = new HandlerFactory();
         return factory.createHandler(query).handle();
     }

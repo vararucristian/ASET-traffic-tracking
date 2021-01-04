@@ -56,7 +56,7 @@ class VehicleDetector:
 
     def create_json_answer(self, intersection_name, image, boxes, classes, scores, min_score=0.5):
         dict_response = dict()
-        dict_response['idTrafficLight'] = int(intersection_name)
+        dict_response['streetId'] = int(intersection_name)
         dict_response['nrCars'] = 0
 
         for i in range(0, len(boxes)):

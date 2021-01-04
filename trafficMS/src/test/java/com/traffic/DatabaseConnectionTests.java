@@ -28,7 +28,7 @@ public class DatabaseConnectionTests {
     }
 
     @Test
-    void getTrafficLightIdTest() throws SQLException {
+    void getStreetIdTest() throws SQLException {
         DatabaseConnection dbInstance = DatabaseConnection.getInstance();
         int maxId = dbInstance.getTrafficId();
         assertTrue("Id should be grater then 0",  maxId > 0);

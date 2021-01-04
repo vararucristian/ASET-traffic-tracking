@@ -3,12 +3,14 @@ package Data;
 public class Street {
     private int id;
     private int nrLanes;
-    private TrafficLight trafficLight;
+    private int idIntersection;
 
-    public Street(int id, int nrLanes, TrafficLight trafficLight) {
+
+    public Street(int id, int nrLanes, int idIntersection) {
         this.id = id;
         this.nrLanes = nrLanes;
-        this.trafficLight = trafficLight;
+
+        this.idIntersection = idIntersection;
     }
 
     public int getId() {
@@ -23,11 +25,4 @@ public class Street {
         this.nrLanes = nrLanes;
     }
 
-    public TrafficLight getTrafficLight() {
-        return trafficLight;
-    }
-
-    public void setTrafficLight(TrafficLight trafficLight) {
-        this.trafficLight = trafficLight;
-    }
 }

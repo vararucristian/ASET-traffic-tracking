@@ -22,7 +22,7 @@ public class AddTrafficHandler implements Handler{
     @Override
     public String handle() {
         Response response = new Response();
-        response.success = databaseConnection.addTraffic(command.getIdTrafficLight(),
+        response.success = databaseConnection.addTraffic(command.getStreetId(),
                 command.getNrCars(),
                 command.getImage());
         Gson gson = new Gson();
