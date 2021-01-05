@@ -2,6 +2,7 @@ package Handlers;
 
 import DTOs.Commands.CreateUserCommand;
 import DTOs.DTOOperation;
+import Data.UserRepository;
 import DatabaseConnection.DatabaseConnection;
 import com.google.gson.Gson;
 
@@ -13,21 +14,22 @@ public class CreateUserHandler implements Handler {
     }
 
     CreateUserCommand command;
-    DatabaseConnection databaseConnection;
-
+    UserRepository repo;
     public CreateUserHandler(CreateUserCommand command) {
         this.command = command;
-        databaseConnection = DatabaseConnection.getInstance();
+        repo= new UserRepository();
     }
 
     @Override
     public String handle() {
         Response response = new Response();
         if(command.getPassword().equals(command.getConfirmPassword())){
-            response.success = databaseConnection.insertUser(command.getfName(),
-                    command.getlName(),
-                    command.getPassword(),
-                    command.getUserName());
+            response.success = repo.addUser(command.getfName(),
+                                            command.getlName(),
+                                            command.getPassword(),
+                                            command.getUserName()
+                    );
+
             if (response.success)
                 response.reason = "";
             else

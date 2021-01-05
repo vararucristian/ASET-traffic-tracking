@@ -3,6 +3,7 @@ package Handlers;
 import DTOs.Commands.AuthenticateUserCommand;
 import DTOs.DTOOperation;
 import DTOs.Querys.GetUserByUsernameQuery;
+import Data.UserRepository;
 import DatabaseConnection.DatabaseConnection;
 import com.google.gson.Gson;
 
@@ -12,17 +13,16 @@ public class GetUserByUsernameHandler implements Handler {
     }
 
     GetUserByUsernameQuery querry;
-    DatabaseConnection databaseConnection;
-
+    UserRepository repo;
     public GetUserByUsernameHandler(GetUserByUsernameQuery querry) {
         this.querry= querry;
-        databaseConnection = DatabaseConnection.getInstance();
+        repo = new UserRepository();
     }
 
     @Override
     public String handle() {
         GetUserByUsernameHandler.Response response = new GetUserByUsernameHandler.Response();
-        response.success = databaseConnection.getUserByUsername(querry.getUserName()) != null;
+        response.success = repo.getUserByUsername(querry.getUserName()) != null;
         Gson gson = new Gson();
         return gson.toJson(response);
     }
